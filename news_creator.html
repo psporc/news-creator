@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>News Creator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 10px;
+      background: #f9f9f9;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    form {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+    input[type="text"], textarea {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      resize: vertical;
+    }
+    button {
+      margin-top: 15px;
+      padding: 10px 20px;
+      background: #007bff;
+      border: none;
+      color: white;
+      font-weight: bold;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    .news-list {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    }
+    .news-item {
+      border-bottom: 1px solid #eee;
+      padding: 15px 0;
+    }
+    .news-item:last-child {
+      border-bottom: none;
+    }
+    .news-item h2 {
+      margin: 0 0 5px 0;
+      color: #007bff;
+    }
+    .news-item p {
+      margin: 0 0 10px 0;
+      color: #555;
+    }
+    .news-item .date {
+      font-size: 0.85em;
+      color: #999;
+    }
+    .share-link {
+      font-size: 0.9em;
+      margin-top: 5px;
+    }
+    .share-link button {
+      background: #4267B2;
+      padding: 5px 10px;
+      font-size: 0.85em;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>News Creator</h1>
+  
+  <form id="newsForm">
+    <label for="title">News Title</label>
+    <input type="text" id="title" required />
+
+    <label for="content">News Content</label>
+    <textarea id="content" rows="6" required></textarea>
+
+    <label for="date">Date (YYYY-MM-DD)</label>
+    <input type="text" id="date" placeholder="2025-07-10" required />
+
+    <button type="submit">Create News</button>
+  </form>
+
+  <div class="news-list" id="newsList">
+    <h2>Published News</h2>
+    <div id="newsContainer">
+      <p>No news created yet.</p>
+    </div>
+  </div>
+
+<script>
+  const newsForm = document.getElementById('newsForm');
+  const newsContainer = document.getElementById('newsContainer');
+
+  let newsPosts = [];
+
+  function renderNews() {
+    if (newsPosts.length === 0) {
+      newsContainer.innerHTML = '<p>No news created yet.</p>';
+      return;
+    }
+
+    newsContainer.innerHTML = '';
+    newsPosts.forEach((news, index) => {
+      const newsDiv = document.createElement('div');
+      newsDiv.classList.add('news-item');
+      newsDiv.innerHTML = `
+        <h2>${news.title}</h2>
+        <p>${news.content}</p>
+        <div class="date">Published on: ${news.date}</div>
+        <div class="share-link">
+          <button onclick="shareToFacebook(${index})">Share on Facebook</button>
+        </div>
+      `;
+      newsContainer.appendChild(newsDiv);
+    });
+  }
+
+  function shareToFacebook(index) {
+    const news = newsPosts[index];
+    const shareText = encodeURIComponent(`${news.title}\n\n${news.content}\n\nPublished on: ${news.date}`);
+    const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=&quote=${shareText}`;
+    window.open(facebookUrl, '_blank');
+  }
+
+  newsForm.addEventListener('submit', e => {
+    e.preventDefault();
+    const title = document.getElementById('title').value.trim();
+    const content = document.getElementById('content').value.trim();
+    const date = document.getElementById('date').value.trim();
+
+    if (!title || !content || !date) {
+      alert('Please fill all fields');
+      return;
+    }
+
+    newsPosts.unshift({ title, content, date });
+    renderNews();
+    newsForm.reset();
+  });
+
+  renderNews();
+</script>
+
+</body>
+</html>
